@@ -296,10 +296,40 @@ std::string d_t_id(){
 
 }
 
+bool isValidRotationMatrix(const Eigen::Matrix3d& rotationMatrix) {
+    // Check if the matrix is orthogonal (transpose equals inverse)
+    Eigen::Matrix3d transposeMatrix = rotationMatrix.transpose();
+    Eigen::Matrix3d shouldBeIdentity = transposeMatrix * rotationMatrix;
+    Eigen::Matrix3d identityDifference = Eigen::Matrix3d::Identity() - shouldBeIdentity;
 
+    return identityDifference.norm() < 1e-4;
+}
+
+Eigen::Vector3f rotationMatrixToEulerAngles(const Eigen::Matrix3d& R) {
+    float sy = sqrt(R(0,0) * R(0,0) +  R(1,0) * R(1,0) );
+    bool singular = sy < 1e-6; // If
+    
+    float x, y, z;
+    if (!singular) {
+        x = atan2(R(2,1), R(2,2));
+        y = atan2(-R(2,0), sy);
+        z = atan2(R(1,0), R(0,0));
+    } else {
+        x = atan2(-R(1,2), R(1,1));
+        y = atan2(-R(2,0), sy);
+        z = 0;
+    }
+    return Eigen::Vector3f(x, y, z);
+}
 
 template<class Type> 
 void print4x4Mat (const Eigen::Matrix<Type, 4, 4>& mat){
+
+    Eigen::Matrix3d rotationMatrix;
+    rotationMatrix <<  mat(0, 0), mat(0,1), mat(0,2),
+                       mat(1, 0), mat(1,1), mat(1,2),
+                       mat(2, 0), mat(2,1), mat(2,2);
+
 
     std::cout << "\tRotation matrix :\n" << std::fixed
             << "\t\t    | "<< std::setw(10) << mat(0, 0) << " " << std::setw(10) << mat(0, 1) << " " << std::setw(10) <<  mat(0, 2) << " | \n"
@@ -308,6 +338,9 @@ void print4x4Mat (const Eigen::Matrix<Type, 4, 4>& mat){
             << "\tTranslation vector :\n"
             << "\t\tt = < "<< std::setw(10) << mat(0, 3) << ", " << std::setw(10) << mat(1, 3) << ", " << std::setw(10) <<  mat(2, 3) << " >\n" << std::flush;
 
+        Eigen::Vector3f euler_zyx = rotationMatrixToEulerAngles(rotationMatrix);
+        std::cout<< "\tEuler Angles (Order ZYX):\n"
+                << "\t\t" << "X : " << euler_zyx[0] << "\tY : " << euler_zyx[1] << "\tZ : " << euler_zyx[2] << std::endl;
 }
 
 
