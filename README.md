@@ -1,3 +1,22 @@
+# CHIRONIX USAGE INSTRUCTIONS
+1) Initialize the robot with approximate calibration values
+
+2) Clone the given repo on a system with display and catkin build it.
+
+3) Export ROS_MASTER and rosrun pc_alignment_tools point_to_point_aligner
+
+4) Select the source and target point clouds
+
+5) If there is a decent overlap (for instance front lidar and velodyne), pick estimated max error as 1.0. Otherwise increase the value to 2.0
+
+6) Start with a max correspondence distance of 0.1
+
+7) Step Iteration of 100 worked well
+
+8) Press ‘space' to execute one batch of iterations. When you want to reduce the max correspondence distance press 'd'.
+
+9) Keep iterating till the converged distance stabilizes.
+
 
 # PointCloud Alignment/Registration Tools with PCL & ROS
 Calibration of LiDAR-Sensors - PointCloud Alignment/Registration tools with PCL &amp; ROS. 
